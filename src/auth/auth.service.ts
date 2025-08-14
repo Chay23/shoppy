@@ -8,7 +8,10 @@ import ms, { StringValue } from 'ms';
 import { TokenPayload } from 'src/types/token-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from './config/jwt-refresh.config';
-import { AUTHENTICATION_COOKIE, REFRESH_COOKIE } from 'src/common/constants/cookies';
+import {
+  AUTHENTICATION_COOKIE,
+  REFRESH_COOKIE,
+} from 'src/common/constants/cookies';
 
 @Injectable()
 export class AuthService {
@@ -62,12 +65,14 @@ export class AuthService {
       httpOnly: true,
       secure: true,
       expires: this.getCookieExpiration('jwt.signOptions.expiresIn'),
+      path: '/',
     });
 
     response.setCookie(REFRESH_COOKIE, refreshToken, {
       httpOnly: true,
       secure: true,
       expires: this.getCookieExpiration('jwt-refresh.expiresIn'),
+      path: '/',
     });
 
     return { tokenPayload };
