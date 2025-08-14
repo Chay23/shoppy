@@ -4,16 +4,17 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from '../../types/token-payload.interface';
 import { FastifyRequest } from 'fastify';
+import { AUTHENTICATION_COOKIE } from 'src/common/constants/cookies';
 
 @Injectable()
-export class JwtAuthStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: FastifyRequest) =>
-          request.cookies.Authentication as string | null,
+          request.cookies[AUTHENTICATION_COOKIE] as string | null,
       ]),
-      secretOrKey: configService.getOrThrow('JWT_SECRET'),
+      secretOrKey: configService.getOrThrow('jwt.secret'),
     });
   }
   validate(payload: TokenPayload) {

@@ -1,12 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'generated/prisma';
 import { FastifyReply } from 'fastify';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
 import { TokenPayload } from 'src/types/token-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import refreshJwtConfig from './config/jwt-refresh.config';
+import { AUTHENTICATION_COOKIE, REFRESH_COOKIE } from 'src/common/constants/cookies';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,8 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    @Inject(refreshJwtConfig.KEY)
+    private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
 
   async verifyUser(email: string, password: string) {
@@ -29,29 +33,53 @@ export class AuthService {
     }
   }
 
-  async login(user: User, response: FastifyReply) {
+  private getCookieExpiration(configKey: string) {
     const expires = new Date();
     expires.setMilliseconds(
       expires.getMilliseconds() +
-        ms(
-          this.configService.getOrThrow<string>(
-            'JWT_EXPIRATION',
-          ) as StringValue,
-        ),
+        ms(this.configService.getOrThrow(configKey) as StringValue),
     );
 
+    return expires;
+  }
+
+  async signin(user: User, response: FastifyReply) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
     };
 
-    const token = this.jwtService.sign(tokenPayload);
+    const { accessToken, refreshToken } = await this.getJwtTokens(tokenPayload);
 
-    response.setCookie('Authentication', token, {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.usersService.update({
+      where: { id: user.id },
+      data: {
+        refreshToken: hashedRefreshToken,
+      },
+    });
+
+    response.setCookie(AUTHENTICATION_COOKIE, accessToken, {
       httpOnly: true,
       secure: true,
-      expires,
+      expires: this.getCookieExpiration('jwt.signOptions.expiresIn'),
+    });
+
+    response.setCookie(REFRESH_COOKIE, refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: this.getCookieExpiration('jwt-refresh.expiresIn'),
     });
 
     return { tokenPayload };
+  }
+
+  async getJwtTokens(payload: TokenPayload) {
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = await this.jwtService.signAsync(
+      payload,
+      this.refreshTokenConfig,
+    );
+
+    return { accessToken, refreshToken };
   }
 }

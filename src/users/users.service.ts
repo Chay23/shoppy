@@ -30,6 +30,10 @@ export class UsersService {
     }
   }
 
+  async update(params: Prisma.UserUpdateArgs) {
+    return this.prismaSerivce.user.update(params);
+  }
+
   async getUnique(filter: Prisma.UserWhereUniqueInput) {
     return this.prismaSerivce.user.findUniqueOrThrow({
       where: filter,
