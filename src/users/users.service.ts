@@ -3,15 +3,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '../../generated/prisma/runtime/library';
-import { Prisma } from 'generated/prisma';
+import { Prisma, User } from 'generated/prisma';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaSerivce: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateUserDto) {
+  async create(data: CreateUserDto): Promise<Partial<User>> {
     try {
-      return this.prismaSerivce.user.create({
+      return await this.prismaService.user.create({
         data: {
           ...data,
           password: await bcrypt.hash(data.password, 10),
@@ -31,11 +31,11 @@ export class UsersService {
   }
 
   async update(params: Prisma.UserUpdateArgs) {
-    return this.prismaSerivce.user.update(params);
+    return this.prismaService.user.update(params);
   }
 
   async getUnique(filter: Prisma.UserWhereUniqueInput) {
-    return this.prismaSerivce.user.findUniqueOrThrow({
+    return this.prismaService.user.findUniqueOrThrow({
       where: filter,
     });
   }
