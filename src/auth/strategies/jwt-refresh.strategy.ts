@@ -4,7 +4,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from '../../types/token-payload.interface';
 import { FastifyRequest } from 'fastify';
-import { AuthService } from '../auth.service';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { REFRESH_COOKIE } from 'src/common/constants/cookies';
@@ -16,7 +15,6 @@ export class RefreshJwtStrategy extends PassportStrategy(
 ) {
   constructor(
     configService: ConfigService,
-    private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) {
     super({
