@@ -35,6 +35,14 @@ export class CategoriesService {
     return { count, offset: pagination.offset, limit: pagination.limit, items };
   }
 
+  async adminSigle(id: number) {
+    return await this.categoriesRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
   async create(data: CreateCategoryDto) {
     try {
       const slug =
