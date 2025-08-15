@@ -21,4 +21,8 @@ export class CategoriesRepository {
   count(args?: Prisma.CategoryCountArgs) {
     return this.prismaService.category.count(args);
   }
+
+  delete(args: Prisma.CategoryDeleteArgs) {
+    return this.prismaService.category.delete(args);
+  }
 }

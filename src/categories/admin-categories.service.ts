@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import slugify from 'slugify';
@@ -7,12 +11,13 @@ import { Category, Prisma } from 'generated/prisma';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
 import { Search } from 'src/common/decorators/search-param.decorator';
 import { PaginatedResponse } from 'src/types/paginated-response.interface';
+import { categoriesMessages } from 'src/common/messages/categories';
 
 @Injectable()
-export class CategoriesService {
+export class AdminCategoriesService {
   constructor(private categoriesRepository: CategoriesRepository) {}
 
-  async adminList(
+  async list(
     pagination: Pagination,
     search: Search,
   ): Promise<PaginatedResponse<Partial<Category>>> {
@@ -35,12 +40,32 @@ export class CategoriesService {
     return { count, offset: pagination.offset, limit: pagination.limit, items };
   }
 
-  async adminSigle(id: number) {
-    return await this.categoriesRepository.findOne({
-      where: {
-        id,
-      },
-    });
+  async sigle(id: number) {
+    try {
+      return await this.categoriesRepository.findOne({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new NotFoundException(categoriesMessages.NotFound(id));
+      }
+    }
+  }
+
+  async deleteSingle(id: number) {
+    try {
+      return await this.categoriesRepository.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new NotFoundException(categoriesMessages.NotFound(id));
+      }
+    }
   }
 
   async create(data: CreateCategoryDto) {
@@ -62,7 +87,7 @@ export class CategoriesService {
       });
     } catch (err) {
       if (((err as PrismaClientKnownRequestError).code = 'P2002')) {
-        throw new UnprocessableEntityException('Slug already in use');
+        throw new UnprocessableEntityException(categoriesMessages.SlugInUse());
       }
     }
   }
