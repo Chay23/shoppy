@@ -49,6 +49,7 @@ export class AuthService {
   async signin(user: User, response: FastifyReply) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
+      role: user.role
     };
 
     const { accessToken, refreshToken } = await this.getJwtTokens(tokenPayload);
