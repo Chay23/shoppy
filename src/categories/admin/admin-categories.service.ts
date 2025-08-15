@@ -6,10 +6,9 @@ import {
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import slugify from 'slugify';
-import { CategoriesRepository } from './categories.repository';
+import { CategoriesRepository } from '../categories.repository';
 import { Category, Prisma } from 'generated/prisma';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
-import { Search } from 'src/common/decorators/search-param.decorator';
 import { PaginatedResponse } from 'src/types/paginated-response.interface';
 import { categoriesMessages } from 'src/common/messages/categories';
 
@@ -19,13 +18,13 @@ export class AdminCategoriesService {
 
   async list(
     pagination: Pagination,
-    search: Search,
+    query: string,
   ): Promise<PaginatedResponse<Partial<Category>>> {
     const where: Prisma.CategoryWhereInput = {};
 
-    if (search.q) {
+    if (query) {
       where.name = {
-        contains: search.q,
+        contains: query,
         mode: 'insensitive',
       };
     }
