@@ -9,4 +9,12 @@ export class ProductsRepository {
   create(args: Prisma.ProductCreateArgs) {
     return this.prismaService.product.create(args);
   }
+
+  findOne(args: Prisma.ProductFindUniqueOrThrowArgs) {
+    return this.prismaService.product.findUniqueOrThrow(args);
+  }
+
+  update(args: Prisma.ProductUpdateArgs) {
+    return this.prismaService.product.update(args);
+  }
 }
