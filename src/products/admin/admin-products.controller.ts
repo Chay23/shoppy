@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   ParseIntPipe,
   Patch,
@@ -111,5 +112,10 @@ export class AdminProductsController {
   @Patch(':id')
   updateProduct(@Id(ParseIntPipe) id: number, @Body() body: UpdateProductDto) {
     return this.adminProductService.update(id, body);
+  }
+
+  @Delete(':id')
+  deleteProduct(@Id(ParseIntPipe) id: number) {
+    return this.adminProductService.deleteOne(id);
   }
 }

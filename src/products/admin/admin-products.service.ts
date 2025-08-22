@@ -140,4 +140,21 @@ export class AdminProductsService {
       throw err;
     }
   }
+
+  async deleteOne(id: number) {
+    try {
+      return await this.productRepository.deleteOne({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new UnprocessableEntityException(
+          productMessages.ProductNotFound(id),
+        );
+      }
+      throw err;
+    }
+  }
 }

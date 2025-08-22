@@ -25,4 +25,8 @@ export class ProductsRepository {
   update(args: Prisma.ProductUpdateArgs) {
     return this.prismaService.product.update(args);
   }
+
+  deleteOne(args: Prisma.ProductDeleteArgs) {
+    return this.prismaService.product.delete(args);
+  }
 }
