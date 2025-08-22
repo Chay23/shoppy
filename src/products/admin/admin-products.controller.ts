@@ -1,9 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   ParseIntPipe,
   Post,
-  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,6 +19,11 @@ import { FilesUploadInterceptor } from 'src/common/interceptors/files/files-uplo
 import { UploadedFiles } from 'src/common/decorators/uploaded-files.decorator';
 import { MultipartFile } from '@fastify/multipart';
 import { UploadedFile } from 'src/common/decorators/uploaded-file.decorator';
+import {
+  Pagination,
+  PaginationParams,
+} from 'src/common/decorators/pagination-params.decorator';
+import { SearchParam } from 'src/common/decorators/search-param.decorator';
 
 @AdminOnly()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -86,5 +91,10 @@ export class AdminProductsController {
     @UploadedFiles() files: MultipartFile[],
   ) {
     return this.adminProductService.updateImages(id, files);
+  }
+
+  @Get('')
+  getProducts(@PaginationParams() pagination: Pagination, @SearchParam() query: string) {
+    return this.adminProductService.findAll(pagination, query)
   }
 }
