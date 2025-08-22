@@ -27,12 +27,16 @@ import {
   PaginationParams,
 } from 'src/common/decorators/pagination-params.decorator';
 import { SearchParam } from 'src/common/decorators/search-param.decorator';
+import { ProductsService } from '../products.service';
 
 @AdminOnly()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('admin/products')
 export class AdminProductsController {
-  constructor(private adminProductService: AdminProductsService) {}
+  constructor(
+    private adminProductService: AdminProductsService,
+    private productsService: ProductsService,
+  ) {}
   @Post('')
   createProduct(@Body() body: CreateProductDto) {
     return this.adminProductService.create(body);
@@ -101,12 +105,12 @@ export class AdminProductsController {
     @PaginationParams() pagination: Pagination,
     @SearchParam() query: string,
   ) {
-    return this.adminProductService.findAll(pagination, query);
+    return this.productsService.findAll(pagination, query);
   }
 
   @Get(':id')
   findOne(@Id(ParseIntPipe) id: number) {
-    return this.adminProductService.findOne(id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')

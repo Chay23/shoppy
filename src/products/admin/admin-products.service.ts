@@ -82,47 +82,6 @@ export class AdminProductsService {
     });
   }
 
-  async findAll(
-    pagination: Pagination,
-    query: string,
-  ): Promise<PaginatedResponse<Partial<Product>>> {
-    const { offset, limit } = pagination;
-    const where: Prisma.ProductWhereInput = {};
-
-    if (query) {
-      where.name = {
-        contains: query,
-        mode: 'insensitive',
-      };
-    }
-
-    const items = await this.productRepository.findAll({
-      skip: offset,
-      take: limit,
-    });
-
-    const count = await this.productRepository.count({ where });
-
-    return { count, offset, limit, items };
-  }
-
-  async findOne(id: number) {
-    try {
-      return await this.productRepository.findOne({
-        where: {
-          id,
-        },
-      });
-    } catch (err) {
-      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
-        throw new UnprocessableEntityException(
-          productMessages.ProductNotFound(id),
-        );
-      }
-      throw err;
-    }
-  }
-
   async update(id: number, data: UpdateProductDto) {
     try {
       return await this.productRepository.update({
