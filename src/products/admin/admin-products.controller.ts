@@ -103,6 +103,11 @@ export class AdminProductsController {
     return this.adminProductService.findAll(pagination, query);
   }
 
+  @Get(':id')
+  findOne(@Id(ParseIntPipe) id: number) {
+    return this.adminProductService.findOne(id);
+  }
+
   @Patch(':id')
   updateProduct(@Id(ParseIntPipe) id: number, @Body() body: UpdateProductDto) {
     return this.adminProductService.update(id, body);

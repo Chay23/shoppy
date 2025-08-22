@@ -106,6 +106,23 @@ export class AdminProductsService {
     return { count, offset, limit, items };
   }
 
+  async findOne(id: number) {
+    try {
+      return await this.productRepository.findOne({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new UnprocessableEntityException(
+          productMessages.ProductNotFound(id),
+        );
+      }
+      throw err;
+    }
+  }
+
   async update(id: number, data: UpdateProductDto) {
     try {
       return await this.productRepository.update({
