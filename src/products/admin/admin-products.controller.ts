@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
   UseInterceptors,
@@ -19,6 +20,7 @@ import { FilesUploadInterceptor } from 'src/common/interceptors/files/files-uplo
 import { UploadedFiles } from 'src/common/decorators/uploaded-files.decorator';
 import { MultipartFile } from '@fastify/multipart';
 import { UploadedFile } from 'src/common/decorators/uploaded-file.decorator';
+import { UpdateProductDto } from './dtos/update-product.dto';
 import {
   Pagination,
   PaginationParams,
@@ -94,7 +96,15 @@ export class AdminProductsController {
   }
 
   @Get('')
-  getProducts(@PaginationParams() pagination: Pagination, @SearchParam() query: string) {
-    return this.adminProductService.findAll(pagination, query)
+  getProducts(
+    @PaginationParams() pagination: Pagination,
+    @SearchParam() query: string,
+  ) {
+    return this.adminProductService.findAll(pagination, query);
+  }
+
+  @Patch(':id')
+  updateProduct(@Id(ParseIntPipe) id: number, @Body() body: UpdateProductDto) {
+    return this.adminProductService.update(id, body);
   }
 }

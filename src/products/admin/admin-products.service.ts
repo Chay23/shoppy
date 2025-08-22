@@ -9,6 +9,7 @@ import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library'
 import { productMessages } from '../messages/messages';
 import slugify from 'slugify';
 import { MultipartFile } from '@fastify/multipart';
+import { UpdateProductDto } from './dtos/update-product.dto';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
 import { Prisma, Product } from 'generated/prisma';
 import { PaginatedResponse } from 'src/types/paginated-response.interface';
@@ -103,5 +104,23 @@ export class AdminProductsService {
     const count = await this.productRepository.count({ where });
 
     return { count, offset, limit, items };
+  }
+
+  async update(id: number, data: UpdateProductDto) {
+    try {
+      return await this.productRepository.update({
+        where: {
+          id,
+        },
+        data,
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new UnprocessableEntityException(
+          productMessages.ProductNotFound(id),
+        );
+      }
+      throw err;
+    }
   }
 }
