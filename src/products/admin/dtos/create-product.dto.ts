@@ -18,12 +18,13 @@ export class CreateProductDto {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsDecimal()
   price: string;
 
   @IsNumber()
+  @IsOptional()
   stock?: number;
 
   @IsString()

@@ -18,6 +18,7 @@ export class AdminProductsService {
       return await this.productRepository.create({
         data: {
           ...data,
+          stock: data.stock || 0,
           slug: data.slug || slugify(data.name),
         },
       });
