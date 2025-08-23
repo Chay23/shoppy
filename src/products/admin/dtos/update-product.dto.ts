@@ -1,7 +1,7 @@
 import {
-  IsDecimal,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   MaxLength,
 } from 'class-validator';
@@ -21,12 +21,14 @@ export class UpdateProductDto {
   @IsOptional()
   description: string;
 
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
   @IsOptional()
   price: string;
 
   @IsNumber()
   @IsOptional()
+  @IsPositive()
   stock?: number;
 
   @IsString()
