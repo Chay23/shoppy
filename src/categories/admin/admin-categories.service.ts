@@ -11,12 +11,13 @@ import { Category, Prisma } from 'generated/prisma';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
 import { PaginatedResponse } from 'src/types/paginated-response.interface';
 import { categoriesMessages } from 'src/categories/messages/messages';
+import { UpdateCategoryDto } from './dtos/update-category.dto';
 
 @Injectable()
 export class AdminCategoriesService {
   constructor(private categoriesRepository: CategoriesRepository) {}
 
-  async list(
+  async findAll(
     pagination: Pagination,
     query: string,
   ): Promise<PaginatedResponse<Partial<Category>>> {
@@ -39,12 +40,27 @@ export class AdminCategoriesService {
     return { count, offset: pagination.offset, limit: pagination.limit, items };
   }
 
-  async sigle(id: number) {
+  async findOne(id: number) {
     try {
       return await this.categoriesRepository.findOne({
         where: {
           id,
         },
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new NotFoundException(categoriesMessages.NotFound(id));
+      }
+    }
+  }
+
+  async update(id: number, data: UpdateCategoryDto) {
+    try {
+      return await this.categoriesRepository.update({
+        where: {
+          id,
+        },
+        data,
       });
     } catch (err) {
       if ((err as PrismaClientKnownRequestError).code === 'P2025') {

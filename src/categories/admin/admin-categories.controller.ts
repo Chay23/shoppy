@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import {
 } from 'src/common/decorators/pagination-params.decorator';
 import { SearchParam } from 'src/common/decorators/search-param.decorator';
 import { Id } from 'src/common/decorators/id-param.decorator';
+import { UpdateCategoryDto } from './dtos/update-category.dto';
 
 @AdminOnly()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -34,12 +36,20 @@ export class AdminCategoriesController {
     @PaginationParams() pagination: Pagination,
     @SearchParam() query: string,
   ) {
-    return this.adminCategoriesService.list(pagination, query);
+    return this.adminCategoriesService.findAll(pagination, query);
   }
 
   @Get(':id')
   getCategory(@Id(ParseIntPipe) id: number) {
-    return this.adminCategoriesService.sigle(id);
+    return this.adminCategoriesService.findOne(id);
+  }
+
+  @Patch(':id')
+  updateCategory(
+    @Id(ParseIntPipe) id: number,
+    @Body() body: UpdateCategoryDto,
+  ) {
+    return this.adminCategoriesService.update(id, body);
   }
 
   @Delete(':id')

@@ -22,6 +22,10 @@ export class CategoriesRepository {
     return this.prismaService.category.count(args);
   }
 
+  update(args: Prisma.CategoryUpdateArgs) {
+    return this.prismaService.category.update(args);
+  }
+
   delete(args: Prisma.CategoryDeleteArgs) {
     return this.prismaService.category.delete(args);
   }
