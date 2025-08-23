@@ -85,15 +85,14 @@ export class AdminCategoriesService {
 
   async create(data: CreateCategoryDto) {
     try {
-      const slug =
-        data.slug ||
-        slugify(data.name, {
-          lower: true,
-        });
       return await this.categoriesRepository.create({
         data: {
           ...data,
-          slug,
+          slug:
+            data.slug ||
+            slugify(data.name, {
+              lower: true,
+            }),
         },
         select: {
           name: true,

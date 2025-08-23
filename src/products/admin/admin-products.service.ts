@@ -23,7 +23,11 @@ export class AdminProductsService {
         data: {
           ...data,
           stock: data.stock || 0,
-          slug: data.slug || slugify(data.name),
+          slug:
+            data.slug ||
+            slugify(data.name, {
+              lower: true,
+            }),
         },
       });
     } catch (err) {

@@ -1,15 +1,20 @@
-import { Controller, Get, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ProductsService } from '../products.service';
 import {
   Pagination,
   PaginationParams,
 } from 'src/common/decorators/pagination-params.decorator';
 import { SearchParam } from 'src/common/decorators/search-param.decorator';
-import { Id } from 'src/common/decorators/id-param.decorator';
+import { StoreProductsService } from './store-products.service';
+import { Slug } from 'src/common/decorators/slug-param.decorator';
 
 @Controller('store/products')
 export class StoreProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private storeProductsService: StoreProductsService,
+  ) {}
+
   @Get('')
   getProducts(
     @PaginationParams() pagination: Pagination,
@@ -18,8 +23,8 @@ export class StoreProductsController {
     return this.productsService.findAll(pagination, query);
   }
 
-  @Get(':id')
-  getProduct(@Id(ParseIntPipe) id: number) {
-    return this.productsService.findOne(id);
+  @Get(':slug')
+  getProduct(@Slug() slug: string) {
+    return this.storeProductsService.findOnyBySlug(slug);
   }
 }
