@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
 import { Prisma, Product } from 'generated/prisma';
-import { PaginatedResponse } from 'src/types/paginated-response.interface';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
 import { ProductsRepository } from './products.repository';
 import { productMessages } from './messages/messages';
 

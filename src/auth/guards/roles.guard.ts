@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from 'generated/prisma';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { FastifyRequest } from 'fastify';
-import { TokenPayload } from 'src/types/token-payload.interface';
+import { TokenPayload } from 'src/common/interfaces/auth.interface';
+import { getCurrentUserByContext } from 'src/common/utils/user.utils';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -16,8 +16,7 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles) return true;
 
-    const request: FastifyRequest = context.switchToHttp().getRequest();
-    const userPayload = request.user as unknown as TokenPayload;
+    const userPayload = getCurrentUserByContext<TokenPayload>(context);
 
     return requiredRoles.includes(userPayload.role);
   }

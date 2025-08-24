@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { TokenPayload } from '../../types/token-payload.interface';
+import { TokenPayload } from '../../common/interfaces/auth.interface';
 import { FastifyRequest } from 'fastify';
 import { AUTHENTICATION_COOKIE } from 'src/common/constants/cookies';
 

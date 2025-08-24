@@ -10,9 +10,7 @@ import { productMessages } from '../messages/messages';
 import slugify from 'slugify';
 import { MultipartFile } from '@fastify/multipart';
 import { UpdateProductDto } from './dtos/update-product.dto';
-import { Pagination } from 'src/common/decorators/pagination-params.decorator';
-import { Prisma, Product } from 'generated/prisma';
-import { PaginatedResponse } from 'src/types/paginated-response.interface';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class AdminProductsService {

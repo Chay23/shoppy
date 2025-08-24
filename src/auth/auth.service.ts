@@ -5,7 +5,7 @@ import { User } from 'generated/prisma';
 import { FastifyReply } from 'fastify';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
-import { TokenPayload } from 'src/types/token-payload.interface';
+import { TokenPayload } from 'src/common/interfaces/auth.interface';
 import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from './config/jwt-refresh.config';
 import {
@@ -49,7 +49,7 @@ export class AuthService {
   async signin(user: User, response: FastifyReply) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
-      role: user.role
+      role: user.role,
     };
 
     const { accessToken, refreshToken } = await this.getJwtTokens(tokenPayload);

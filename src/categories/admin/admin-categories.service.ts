@@ -9,7 +9,7 @@ import slugify from 'slugify';
 import { CategoriesRepository } from '../categories.repository';
 import { Category, Prisma } from 'generated/prisma';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
-import { PaginatedResponse } from 'src/types/paginated-response.interface';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
 import { categoriesMessages } from 'src/categories/messages/messages';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 
