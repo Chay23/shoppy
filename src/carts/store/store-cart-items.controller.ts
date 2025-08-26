@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ParseIntPipe,
   Patch,
   Post,
@@ -31,4 +32,9 @@ export class StoreCartItemsController {
   ) {
     return this.storeCartItemsService.updateItemQuantity(cart, id, body);
   }
+
+  @Delete(':id')
+  deleteItem(@CurrentCart() cart: CartIdentity, @Id(ParseIntPipe) id: number) {
+    return this.storeCartItemsService.deleteItem(cart, id);
+  } 
 }

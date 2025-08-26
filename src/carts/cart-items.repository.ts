@@ -13,4 +13,8 @@ export class CartItemsRepository {
   update(args: Prisma.CartItemUpdateArgs) {
     return this.prismaService.cartItem.update(args);
   }
+
+  delete(args: Prisma.CartItemDeleteArgs) {
+    return this.prismaService.cartItem.delete(args);
+  }
 }
