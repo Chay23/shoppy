@@ -24,6 +24,11 @@ export class StoreCartItemsController {
     return this.storeCartItemsService.addItem(cart, body);
   }
 
+  @Delete('')
+  deleteAllItems(@CurrentCart() cart: CartIdentity) {
+    return this.storeCartItemsService.deleteAllItems(cart);
+  }
+
   @Patch(':id')
   updateItemQuantity(
     @CurrentCart() cart: CartIdentity,
@@ -36,5 +41,5 @@ export class StoreCartItemsController {
   @Delete(':id')
   deleteItem(@CurrentCart() cart: CartIdentity, @Id(ParseIntPipe) id: number) {
     return this.storeCartItemsService.deleteItem(cart, id);
-  } 
+  }
 }

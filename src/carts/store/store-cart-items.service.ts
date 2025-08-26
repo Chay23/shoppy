@@ -86,4 +86,13 @@ export class StoreCartItemsService {
       this.handleCartItemsError(err, { productId });
     }
   }
+
+  async deleteAllItems(cartIdentity: CartIdentity) {
+    const cart = await this.storeCartsService.resolveOrCreateCart(cartIdentity);
+    return await this.cartItemsRepository.deleteMany({
+      where: {
+        cartId: cart.id,
+      },
+    });
+  }
 }

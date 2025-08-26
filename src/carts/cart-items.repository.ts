@@ -17,4 +17,8 @@ export class CartItemsRepository {
   delete(args: Prisma.CartItemDeleteArgs) {
     return this.prismaService.cartItem.delete(args);
   }
+
+  deleteMany(args?: Prisma.CartItemDeleteManyArgs) {
+    return this.prismaService.cartItem.deleteMany(args);
+  }
 }
