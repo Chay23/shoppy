@@ -9,6 +9,7 @@ import { StoreProductsService } from './store/store-products.service';
 
 @Module({
   imports: [PrismaModule],
+  exports: [ProductsService],
   controllers: [AdminProductsController, StoreProductsController],
   providers: [
     AdminProductsService,

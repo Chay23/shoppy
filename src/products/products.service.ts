@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
 import { Prisma, Product } from 'generated/prisma';
@@ -43,9 +43,7 @@ export class ProductsService {
       });
     } catch (err) {
       if ((err as PrismaClientKnownRequestError).code === 'P2025') {
-        throw new UnprocessableEntityException(
-          productMessages.ProductNotFound(id),
-        );
+        throw new NotFoundException(productMessages.ProductNotFound(id));
       }
       throw err;
     }
