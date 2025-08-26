@@ -13,9 +13,10 @@ import { CurrentCart } from '../decorators/current-cart.decorator';
 import { Id } from 'src/common/decorators/id-param.decorator';
 import { UpdateItemDto } from './dtos/update-item.dto';
 import { StoreCartItemsService } from './store-cart-items.service';
+import { OptionalJwtAuthGuard } from 'src/auth/guards/optiona-jwt-auth.guard';
 
 @Controller('store/carts/items')
-@UseGuards(CartIdentityGuard)
+@UseGuards(OptionalJwtAuthGuard, CartIdentityGuard)
 export class StoreCartItemsController {
   constructor(private storeCartItemsService: StoreCartItemsService) {}
 

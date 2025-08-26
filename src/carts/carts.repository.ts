@@ -15,7 +15,7 @@ export class CartsRepository {
   }
 
   findOne(args: Prisma.CartFindUniqueOrThrowArgs) {
-    return this.prismaService.cart.findUniqueOrThrow(args);
+    return this.prismaService.cart.findUnique(args);
   }
 
   count(args?: Prisma.CartCountArgs) {
