@@ -9,4 +9,8 @@ export class CartItemsRepository {
   upsert(args: Prisma.CartItemUpsertArgs) {
     return this.prismaService.cartItem.upsert(args);
   }
+
+  update(args: Prisma.CartItemUpdateArgs) {
+    return this.prismaService.cartItem.update(args);
+  }
 }

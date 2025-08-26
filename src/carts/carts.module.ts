@@ -6,10 +6,18 @@ import { CartsRepository } from './carts.repository';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ProductsModule } from 'src/products/products.module';
 import { CartItemsRepository } from './cart-items.repository';
+import { StoreCartItemsController } from './store/store-cart-items.controller';
+import { StoreCartItemsService } from './store/store-cart-items.service';
 
 @Module({
   imports: [PrismaModule, ProductsModule],
-  providers: [CartsService, StoreCartsService, CartsRepository, CartItemsRepository],
-  controllers: [StoreCartsController],
+  providers: [
+    CartsService,
+    StoreCartsService,
+    StoreCartItemsService,
+    CartsRepository,
+    CartItemsRepository,
+  ],
+  controllers: [StoreCartsController, StoreCartItemsController],
 })
 export class CartsModule {}

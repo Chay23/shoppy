@@ -1,12 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CartsRepository } from '../carts.repository';
-import { AddItemDto } from './dtos/add-item.dto';
 import { CartIdentity } from '../guards/cart-identity.guard';
-import { productMessages } from 'src/products/messages/messages';
 import { CartItemsRepository } from '../cart-items.repository';
 import { Cart } from 'generated/prisma';
 import { cartMessages } from '../messages/cart';
@@ -14,11 +8,7 @@ import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class StoreCartsService {
-  constructor(
-    private cartsRepository: CartsRepository,
-    private cartItemsRepository: CartItemsRepository,
-    private productsService: ProductsService,
-  ) {}
+  constructor(private cartsRepository: CartsRepository) {}
 
   async resolveOrCreateCart(cartIdentity: CartIdentity): Promise<Cart> {
     if (cartIdentity.userId) {
@@ -56,27 +46,5 @@ export class StoreCartsService {
     }
 
     throw new NotFoundException(cartMessages.NoRelatedCart());
-  }
-
-  async addItem(cartIdentity: CartIdentity, data: AddItemDto) {
-    await this.productsService.findOne(data.productId);
-    const cart = await this.resolveOrCreateCart(cartIdentity);
-
-    const item = this.cartItemsRepository.upsert({
-      where: {
-        cartId: cart.id,
-        productId: data.productId,
-      },
-      create: {
-        cartId: cart.id,
-        productId: data.productId,
-        quantity: data.quantity,
-      },
-      update: {
-        quantity: { increment: data.quantity },
-      },
-    });
-
-    return item;
   }
 }
