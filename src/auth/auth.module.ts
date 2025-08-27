@@ -9,11 +9,13 @@ import refreshJwtConfig from './config/jwt-refresh.config';
 import jwtConfig from './config/jwt.config';
 import { RefreshJwtStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtAuthStrategy } from './strategies/jwt.strategy';
+import { CartsModule } from 'src/carts/carts.module';
 
 @Module({
   imports: [
     UsersModule,
     ConfigModule,
+    CartsModule,
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),

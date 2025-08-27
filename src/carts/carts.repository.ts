@@ -14,11 +14,15 @@ export class CartsRepository {
     return this.prismaService.cart.findMany(args);
   }
 
-  findOne(args: Prisma.CartFindUniqueOrThrowArgs) {
+  findOne(args: Prisma.CartFindUniqueArgs) {
     return this.prismaService.cart.findUnique(args);
   }
 
   count(args?: Prisma.CartCountArgs) {
     return this.prismaService.cart.count(args);
+  }
+
+  delete(args: Prisma.CartDeleteArgs) {
+    return this.prismaService.cart.delete(args);
   }
 }

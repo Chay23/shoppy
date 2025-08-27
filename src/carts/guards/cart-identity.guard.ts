@@ -1,7 +1,6 @@
-import { CanActivate, ExecutionContext, NestMiddleware } from '@nestjs/common';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { Observable } from 'rxjs';
 import { CART_TOKEN_COOKIE } from 'src/common/constants/cookies';
 import { TokenPayload } from 'src/common/interfaces/auth.interface';
 

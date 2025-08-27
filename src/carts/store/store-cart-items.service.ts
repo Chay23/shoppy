@@ -38,8 +38,7 @@ export class StoreCartItemsService {
 
     const item = this.cartItemsRepository.upsert({
       where: {
-        cartId: cart.id,
-        productId: data.productId,
+        cartId_productId: { productId: data.productId, cartId: cart.id },
       },
       create: {
         cartId: cart.id,
@@ -63,8 +62,7 @@ export class StoreCartItemsService {
     try {
       return await this.cartItemsRepository.update({
         where: {
-          cartId: cart.id,
-          productId,
+          cartId_productId: { productId, cartId: cart.id },
         },
         data,
       });
@@ -78,8 +76,7 @@ export class StoreCartItemsService {
     try {
       return await this.cartItemsRepository.delete({
         where: {
-          cartId: cart.id,
-          productId,
+          cartId_productId: { productId, cartId: cart.id },
         },
       });
     } catch (err) {

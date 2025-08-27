@@ -2,7 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'generated/prisma';
-import { FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
 import { TokenPayload } from 'src/common/interfaces/auth.interface';
@@ -10,8 +10,10 @@ import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from './config/jwt-refresh.config';
 import {
   AUTHENTICATION_COOKIE,
+  CART_TOKEN_COOKIE,
   REFRESH_COOKIE,
 } from 'src/common/constants/cookies';
+import { StoreCartsService } from 'src/carts/store/store-carts.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly storeCartsService: StoreCartsService,
     @Inject(refreshJwtConfig.KEY)
     private refreshTokenConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
@@ -46,7 +49,7 @@ export class AuthService {
     return expires;
   }
 
-  async signin(user: User, response: FastifyReply) {
+  async signin(user: User, request: FastifyRequest, response: FastifyReply) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
       role: user.role,
@@ -61,6 +64,13 @@ export class AuthService {
         refreshToken: hashedRefreshToken,
       },
     });
+
+    const guestCartToken = request.cookies[CART_TOKEN_COOKIE];
+
+    if (guestCartToken) {
+      await this.storeCartsService.mergeGuestCartIntoUser(guestCartToken, user.id);
+      response.clearCookie(CART_TOKEN_COOKIE, { path: '/' });
+    }
 
     response.setCookie(AUTHENTICATION_COOKIE, accessToken, {
       httpOnly: true,
