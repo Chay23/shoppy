@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -13,6 +14,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/jwt-refresh.guard';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -37,5 +39,14 @@ export class AuthController {
     @Req() req: FastifyRequest,
   ) {
     return this.authService.signin(user, req, res);
+  }
+
+  @Post('signup')
+  signup(
+    @Body() body: CreateUserDto,
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ) {
+    return this.authService.signup(body, req, res);
   }
 }

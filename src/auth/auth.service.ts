@@ -14,6 +14,7 @@ import {
   REFRESH_COOKIE,
 } from 'src/common/constants/cookies';
 import { StoreCartsService } from 'src/carts/store/store-carts.service';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -87,6 +88,11 @@ export class AuthService {
     });
 
     return { tokenPayload };
+  }
+
+  async signup(userData: CreateUserDto, req: FastifyRequest, res: FastifyReply) {
+    const user = await this.usersService.create(userData);
+    return await this.signin(user, req, res);
   }
 
   async getJwtTokens(payload: TokenPayload) {

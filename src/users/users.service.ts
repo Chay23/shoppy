@@ -9,17 +9,13 @@ import { Prisma, User } from 'generated/prisma';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateUserDto): Promise<Partial<User>> {
+  async create(data: CreateUserDto) {
     try {
       return await this.prismaService.user.create({
         data: {
           ...data,
           password: await bcrypt.hash(data.password, 10),
           role: data?.role || 'CUSTOMER',
-        },
-        select: {
-          id: true,
-          email: true,
         },
       });
     } catch (err) {
