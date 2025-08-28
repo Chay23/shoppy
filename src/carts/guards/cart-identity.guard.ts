@@ -19,7 +19,7 @@ export class CartIdentityGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest<FastifyRequest>();
 
-    const tokenPayload = req.user as TokenPayload;
+    const tokenPayload = req.user as TokenPayload | undefined;
 
     if (tokenPayload) {
       req.cart = {

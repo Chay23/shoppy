@@ -4,50 +4,42 @@ import { CartIdentity } from '../guards/cart-identity.guard';
 import { Cart, CartItem } from 'generated/prisma';
 import { cartMessages } from '../messages/cart';
 import { CartItemsRepository } from '../cart-items.repository';
+import { CartsService } from '../carts.service';
 
 @Injectable()
 export class StoreCartsService {
   constructor(
     private cartsRepository: CartsRepository,
     private cartItemsRepository: CartItemsRepository,
+    private cartsService: CartsService,
   ) {}
 
   async resolveOrCreateCart(cartIdentity: CartIdentity): Promise<Cart> {
-    if (cartIdentity.userId) {
-      let cart = await this.cartsRepository.findOne({
-        where: {
-          userId: cartIdentity.userId,
-        },
-      });
-      if (!cart) {
-        cart = await this.cartsRepository.create({
-          data: {
-            userId: cartIdentity.userId,
-            status: 'ACTIVE',
-          },
-        });
-      }
-      return cart;
+    if (!cartIdentity.userId && !cartIdentity.guestToken) {
+      throw new NotFoundException(cartMessages.NoRelatedCart());
     }
 
-    if (cartIdentity.guestToken) {
-      let cart = await this.cartsRepository.findOne({
-        where: {
-          guestToken: cartIdentity.guestToken,
-        },
-      });
-      if (!cart) {
-        cart = await this.cartsRepository.create({
-          data: {
-            guestToken: cartIdentity.guestToken,
-            status: 'ACTIVE',
-          },
-        });
+    let cart = await this.cartsService.getCart(cartIdentity);
+
+    const cartData: Partial<Cart> = {
+      status: 'ACTIVE',
+    };
+
+    if (!cart) {
+      if (cartIdentity.userId) {
+        cartData.userId = cartIdentity.userId;
       }
-      return cart;
+
+      if (cartIdentity.guestToken) {
+        cartData.guestToken = cartIdentity.guestToken;
+      }
+
+      cart = await this.cartsRepository.create({
+        data: cartData,
+      });
     }
 
-    throw new NotFoundException(cartMessages.NoRelatedCart());
+    return cart;
   }
 
   async mergeGuestCartIntoUser(guestToken: string, userId: number) {

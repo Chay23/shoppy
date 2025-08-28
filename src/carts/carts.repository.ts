@@ -18,11 +18,19 @@ export class CartsRepository {
     return this.prismaService.cart.findUnique(args);
   }
 
+  findOneOrThrow(args: Prisma.CartFindUniqueOrThrowArgs) {
+    return this.prismaService.cart.findUniqueOrThrow(args);
+  }
+
   count(args?: Prisma.CartCountArgs) {
     return this.prismaService.cart.count(args);
   }
 
   delete(args: Prisma.CartDeleteArgs) {
     return this.prismaService.cart.delete(args);
+  }
+
+  update(args: Prisma.CartUpdateArgs) {
+    return this.prismaService.cart.update(args);
   }
 }

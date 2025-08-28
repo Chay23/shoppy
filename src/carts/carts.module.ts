@@ -10,7 +10,7 @@ import { StoreCartItemsController } from './store/store-cart-items.controller';
 import { StoreCartItemsService } from './store/store-cart-items.service';
 
 @Module({
-  exports: [StoreCartsService],
+  exports: [StoreCartsService, CartsService],
   imports: [PrismaModule, ProductsModule],
   providers: [
     CartsService,
