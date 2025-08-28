@@ -5,6 +5,8 @@ import { Cart, CartItem } from 'generated/prisma';
 import { cartMessages } from '../messages/cart';
 import { CartItemsRepository } from '../cart-items.repository';
 import { CartsService } from '../carts.service';
+import { FastifyReply } from 'fastify';
+import { CART_TOKEN_COOKIE } from 'src/common/constants/cookies';
 
 @Injectable()
 export class StoreCartsService {
@@ -42,7 +44,11 @@ export class StoreCartsService {
     return cart;
   }
 
-  async mergeGuestCartIntoUser(guestToken: string, userId: number) {
+  async mergeGuestCartIntoUser(
+    res: FastifyReply,
+    guestToken: string,
+    userId: number,
+  ) {
     const [guestCart, userCart] = await Promise.all([
       await this.cartsRepository.findOne({
         where: {
@@ -97,5 +103,7 @@ export class StoreCartsService {
         id: guestCart.id,
       },
     });
+
+    res.clearCookie(CART_TOKEN_COOKIE);
   }
 }
