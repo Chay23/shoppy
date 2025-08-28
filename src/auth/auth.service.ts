@@ -69,7 +69,11 @@ export class AuthService {
     const guestCartToken = request.cookies[CART_TOKEN_COOKIE];
 
     if (guestCartToken) {
-      await this.storeCartsService.mergeGuestCartIntoUser(guestCartToken, user.id);
+      await this.storeCartsService.mergeGuestCartIntoUser(
+        response,
+        guestCartToken,
+        user.id,
+      );
       response.clearCookie(CART_TOKEN_COOKIE, { path: '/' });
     }
 
@@ -90,7 +94,11 @@ export class AuthService {
     return { tokenPayload };
   }
 
-  async signup(userData: CreateUserDto, req: FastifyRequest, res: FastifyReply) {
+  async signup(
+    userData: CreateUserDto,
+    req: FastifyRequest,
+    res: FastifyReply,
+  ) {
     const user = await this.usersService.create(userData);
     return await this.signin(user, req, res);
   }
@@ -103,5 +111,20 @@ export class AuthService {
     );
 
     return { accessToken, refreshToken };
+  }
+
+  async logout(userData: TokenPayload, res: FastifyReply) {
+    console.log(userData);
+    await this.usersService.update({
+      where: {
+        id: userData.userId,
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
+
+    res.clearCookie(AUTHENTICATION_COOKIE);
+    res.clearCookie(REFRESH_COOKIE);
   }
 }

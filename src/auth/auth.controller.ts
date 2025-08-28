@@ -15,13 +15,15 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/jwt-refresh.guard';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { TokenPayload } from 'src/common/interfaces/auth.interface';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   signin(
     @CurrentUser() user: User,
@@ -48,5 +50,15 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     return this.authService.signup(body, req, res);
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @CurrentUser() user: TokenPayload,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ) {
+    return this.authService.logout(user, res);
   }
 }
