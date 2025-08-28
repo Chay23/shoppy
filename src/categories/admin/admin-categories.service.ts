@@ -94,10 +94,6 @@ export class AdminCategoriesService {
               lower: true,
             }),
         },
-        select: {
-          name: true,
-          slug: true,
-        },
       });
     } catch (err) {
       if (((err as PrismaClientKnownRequestError).code = 'P2002')) {
