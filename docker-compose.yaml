@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:15
+    networks:
+      - postgres
+    container_name: postgres_db
+    restart: always
+    env_file:
+      - .env.prod
+    ports:
+      - '5555:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: nest_api
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+    restart: always
+    env_file:
+      - .env.prod
+    ports:
+      - '3001:3001'
+
+volumes:
+  postgres_data:
+
+
+networks:
+  postgres:
+    driver: bridge

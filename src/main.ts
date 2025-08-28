@@ -23,6 +23,10 @@ async function bootstrap() {
     root: join(__dirname, '..', 'public'),
     prefix: '/public/',
   });
-  await app.listen(app.get(ConfigService).getOrThrow('PORT'));
+
+  await app.listen({
+    port: app.get(ConfigService).getOrThrow('PORT'),
+    host: '0.0.0.0',
+  });
 }
 bootstrap();
