@@ -102,7 +102,7 @@ model Order {
   id String @default(cuid()) @id
   userId Int? @unique
   user User? @relation(fields: [userId], references: [id])
-  guestEmail String?
+  email String?
   status OrderStatus
   items OrderItem[]
   createdAt DateTime @default(now())
@@ -125,25 +125,25 @@ model OrderItem {
 }
 
 model ShippingInfo {
-  id String @default(cuid()) @id
-  fullName String
-  address String
-  city String
-  country String
-  zipCode String
-  order Order?
+  id        String @default(cuid()) @id
+  fullName  String @db.VarChar(255)
+  address   String @db.VarChar(255)
+  city      String @db.VarChar(255)
+  country   String @db.VarChar(255)
+  zipCode   String @db.VarChar(255)
+  order     Order?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model BillingInfo {
-  id        String   @id @default(cuid())
-  fullName  String
-  address   String
-  city      String
-  country   String
-  zipCode   String
-  order Order?
+  id        String @id @default(cuid())
+  fullName  String @db.VarChar(255)
+  address   String @db.VarChar(255)
+  city      String @db.VarChar(255)
+  country   String @db.VarChar(255)
+  zipCode   String @db.VarChar(255)
+  order     Order?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
