@@ -1,23 +1,28 @@
-import { IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class ShippingInfoDto {
-  @IsString()
   @MaxLength(255)
+  @IsString()
+  @IsNotEmpty()
   fullName: string;
 
-  @IsString()
   @MaxLength(255)
+  @IsString()
+  @IsNotEmpty()
   address: string;
 
-  @IsString()
   @MaxLength(255)
+  @IsString()
+  @IsNotEmpty()
   city: string;
 
-  @IsString()
   @MaxLength(255)
+  @IsString()
+  @IsNotEmpty()
   country: string;
 
-  @IsString()
   @MaxLength(255)
+  @IsString()
+  @IsNotEmpty()
   zipCode: string;
 }
