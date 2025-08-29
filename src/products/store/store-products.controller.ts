@@ -7,6 +7,11 @@ import {
 import { SearchParam } from 'src/common/decorators/search-param.decorator';
 import { StoreProductsService } from './store-products.service';
 import { Slug } from 'src/common/decorators/slug-param.decorator';
+import {
+  Sorting,
+  SortingParams,
+} from 'src/common/decorators/sorting-params.decorator';
+import { Product } from 'generated/prisma';
 
 @Controller('store/products')
 export class StoreProductsController {
@@ -18,9 +23,11 @@ export class StoreProductsController {
   @Get('')
   getProducts(
     @PaginationParams() pagination: Pagination,
+    @SortingParams(['price', 'stock'] as Array<keyof Product>)
+    sort: Sorting,
     @SearchParam() query: string,
   ) {
-    return this.productsService.findAll(pagination, query);
+    return this.productsService.findAll(pagination, sort, query);
   }
 
   @Get(':slug')

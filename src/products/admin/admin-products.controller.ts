@@ -28,6 +28,11 @@ import {
 } from 'src/common/decorators/pagination-params.decorator';
 import { SearchParam } from 'src/common/decorators/search-param.decorator';
 import { ProductsService } from '../products.service';
+import {
+  Sorting,
+  SortingParams,
+} from 'src/common/decorators/sorting-params.decorator';
+import { Product } from 'generated/prisma';
 
 @AdminOnly()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -37,6 +42,24 @@ export class AdminProductsController {
     private adminProductService: AdminProductsService,
     private productsService: ProductsService,
   ) {}
+
+  @Get('')
+  getProducts(
+    @PaginationParams() pagination: Pagination,
+    @SearchParam() query: string,
+    @SortingParams([
+      'name',
+      'slug',
+      'price',
+      'stock',
+      'createdAt',
+      'updatedAt',
+    ] as Array<keyof Product>)
+    sort: Sorting,
+  ) {
+    return this.productsService.findAll(pagination, sort, query);
+  }
+
   @Post('')
   createProduct(@Body() body: CreateProductDto) {
     return this.adminProductService.create(body);
@@ -98,14 +121,6 @@ export class AdminProductsController {
     @UploadedFiles() files: MultipartFile[],
   ) {
     return this.adminProductService.updateImages(id, files);
-  }
-
-  @Get('')
-  getProducts(
-    @PaginationParams() pagination: Pagination,
-    @SearchParam() query: string,
-  ) {
-    return this.productsService.findAll(pagination, query);
   }
 
   @Get(':id')

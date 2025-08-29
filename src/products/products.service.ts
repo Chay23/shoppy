@@ -5,6 +5,7 @@ import { Prisma, Product } from 'generated/prisma';
 import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
 import { ProductsRepository } from './products.repository';
 import { productMessages } from './messages/messages';
+import { Sorting } from 'src/common/decorators/sorting-params.decorator';
 
 @Injectable()
 export class ProductsService {
@@ -12,10 +13,12 @@ export class ProductsService {
 
   async findAll(
     pagination: Pagination,
+    sort: Sorting,
     query: string,
   ): Promise<PaginatedResponse<Partial<Product>>> {
     const { offset, limit } = pagination;
     const where: Prisma.ProductWhereInput = {};
+    const orderBy: Prisma.ProductOrderByWithRelationInput = {};
 
     if (query) {
       where.name = {
@@ -24,12 +27,19 @@ export class ProductsService {
       };
     }
 
-    const items = await this.productRepository.findAll({
-      skip: offset,
-      take: limit,
-    });
+    if (sort) {
+      orderBy[sort.property] = sort.direction;
+    }
 
-    const count = await this.productRepository.count({ where });
+    const [items, count] = await Promise.all([
+      await this.productRepository.findAll({
+        where,
+        orderBy,
+        skip: offset,
+        take: limit,
+      }),
+      await this.productRepository.count({ where, orderBy }),
+    ]);
 
     return { count, offset, limit, items };
   }
