@@ -9,6 +9,7 @@ import { StoreCategoriesController } from './store/store-categories.controller';
 
 @Module({
   imports: [PrismaModule, UsersModule],
+  exports: [CategoriesRepository],
   controllers: [AdminCategoriesController, StoreCategoriesController],
   providers: [
     AdminCategoriesService,

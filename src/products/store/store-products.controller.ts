@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { ProductsService } from '../products.service';
 import {
   Pagination,
   PaginationParams,
@@ -12,22 +11,25 @@ import {
   SortingParams,
 } from 'src/common/decorators/sorting-params.decorator';
 import { Product } from 'generated/prisma';
+import { ProductCategoryParam } from 'src/common/decorators/product-category-param.decorator';
 
 @Controller('store/products')
 export class StoreProductsController {
-  constructor(
-    private productsService: ProductsService,
-    private storeProductsService: StoreProductsService,
-  ) {}
+  constructor(private storeProductsService: StoreProductsService) {}
 
   @Get('')
   getProducts(
     @PaginationParams() pagination: Pagination,
-    @SortingParams(['price', 'stock'] as Array<keyof Product>)
-    sort: Sorting,
-    @SearchParam() query: string,
+    @SortingParams(['price', 'stock'] as Array<keyof Product>) sort: Sorting,
+    @ProductCategoryParam() categorySlug?: string,
+    @SearchParam() query?: string,
   ) {
-    return this.productsService.findAll(pagination, sort, query);
+    return this.storeProductsService.findAll({
+      pagination,
+      sort,
+      query,
+      categorySlug,
+    });
   }
 
   @Get(':slug')

@@ -1,4 +1,5 @@
 export const categoriesMessages = {
   SlugInUse: () => 'Slug already in use',
-  NotFound: (id: number) => `Category with id ${id} not found`,
+  NotFoundById: (id: number) => `Category with id ${id}, not found`,
+  NotFoundBySlug: (slug: string) => `Category with slug: ${slug}, not found`,
 };

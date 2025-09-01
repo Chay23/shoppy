@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ProductsRepository } from '../products.repository';
@@ -11,10 +12,19 @@ import slugify from 'slugify';
 import { MultipartFile } from '@fastify/multipart';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { Prisma } from 'generated/prisma';
+import { Pagination } from 'src/common/decorators/pagination-params.decorator';
+import { Sorting } from 'src/common/decorators/sorting-params.decorator';
+import { CategoriesRepository } from 'src/categories/categories.repository';
+import { ProductsService } from '../products.service';
+import { categoriesMessages } from 'src/categories/messages/messages';
 
 @Injectable()
 export class AdminProductsService {
-  constructor(private productRepository: ProductsRepository) {}
+  constructor(
+    private productRepository: ProductsRepository,
+    private productsService: ProductsService,
+    private categoriesRepository: CategoriesRepository,
+  ) {}
   async create(data: CreateProductDto) {
     try {
       return await this.productRepository.create({
@@ -80,6 +90,44 @@ export class AdminProductsService {
       },
       where: {
         id,
+      },
+    });
+  }
+
+  async findAll({
+    pagination,
+    sort,
+    query,
+    categoryId,
+  }: {
+    pagination: Pagination;
+    sort: Sorting;
+    query?: string;
+    categoryId?: number;
+  }) {
+    const where: Prisma.ProductWhereInput = {};
+
+    if (categoryId) {
+      const category = await this.categoriesRepository.findOne({
+        where: {
+          id: categoryId,
+        },
+      });
+
+      if (!category) {
+        throw new NotFoundException(
+          categoriesMessages.NotFoundById(categoryId),
+        );
+      }
+      where.categoryId = category.id;
+    }
+
+    return this.productsService.findAllPaginated({
+      pagination,
+      sort,
+      query,
+      args: {
+        where,
       },
     });
   }

@@ -33,6 +33,7 @@ import {
   SortingParams,
 } from 'src/common/decorators/sorting-params.decorator';
 import { Product } from 'generated/prisma';
+import { ProductCategoryParam } from 'src/common/decorators/product-category-param.decorator';
 
 @AdminOnly()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -46,7 +47,6 @@ export class AdminProductsController {
   @Get('')
   getProducts(
     @PaginationParams() pagination: Pagination,
-    @SearchParam() query: string,
     @SortingParams([
       'name',
       'slug',
@@ -56,8 +56,15 @@ export class AdminProductsController {
       'updatedAt',
     ] as Array<keyof Product>)
     sort: Sorting,
+    @ProductCategoryParam(ParseIntPipe) categoryId?: number,
+    @SearchParam() query?: string,
   ) {
-    return this.productsService.findAll(pagination, sort, query);
+    return this.adminProductService.findAll({
+      pagination,
+      sort,
+      categoryId,
+      query,
+    });
   }
 
   @Post('')

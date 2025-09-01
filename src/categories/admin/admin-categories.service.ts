@@ -42,14 +42,14 @@ export class AdminCategoriesService {
 
   async findOne(id: number) {
     try {
-      return await this.categoriesRepository.findOne({
+      return await this.categoriesRepository.findOneOrThrow({
         where: {
           id,
         },
       });
     } catch (err) {
       if ((err as PrismaClientKnownRequestError).code === 'P2025') {
-        throw new NotFoundException(categoriesMessages.NotFound(id));
+        throw new NotFoundException(categoriesMessages.NotFoundById(id));
       }
     }
   }
@@ -64,7 +64,7 @@ export class AdminCategoriesService {
       });
     } catch (err) {
       if ((err as PrismaClientKnownRequestError).code === 'P2025') {
-        throw new NotFoundException(categoriesMessages.NotFound(id));
+        throw new NotFoundException(categoriesMessages.NotFoundById(id));
       }
     }
   }
@@ -78,7 +78,7 @@ export class AdminCategoriesService {
       });
     } catch (err) {
       if ((err as PrismaClientKnownRequestError).code === 'P2025') {
-        throw new NotFoundException(categoriesMessages.NotFound(id));
+        throw new NotFoundException(categoriesMessages.NotFoundById(id));
       }
     }
   }

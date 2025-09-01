@@ -14,7 +14,11 @@ export class CategoriesRepository {
     return this.prismaService.category.findMany(args);
   }
 
-  findOne(args: Prisma.CategoryFindUniqueOrThrowArgs) {
+  findOne(args: Prisma.CategoryFindUniqueArgs) {
+    return this.prismaService.category.findUnique(args);
+  }
+
+  findOneOrThrow(args: Prisma.CategoryFindUniqueOrThrowArgs) {
     return this.prismaService.category.findUniqueOrThrow(args);
   }
 
