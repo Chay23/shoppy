@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoriesRepository } from '../categories.repository';
 import { Prisma } from 'generated/prisma';
 import { Pagination } from 'src/common/decorators/pagination-params.decorator';
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { categoriesMessages } from '../messages/messages';
 
 const selectColumns: Prisma.CategorySelect = {
   id: true,
@@ -34,10 +36,18 @@ export class StoreCategoriesService {
     return { count, offset: pagination.offset, limit: pagination.limit, items };
   }
 
-  single(id: number) {
-    return this.categoriesRepository.findOne({
-      where: { id },
-      select: selectColumns,
-    });
+  async findOne(id: number) {
+    try {
+      return await this.categoriesRepository.findOneOrThrow({
+        where: {
+          id,
+        },
+        select: selectColumns,
+      });
+    } catch (err) {
+      if ((err as PrismaClientKnownRequestError).code === 'P2025') {
+        throw new NotFoundException(categoriesMessages.NotFoundById(id));
+      }
+    }
   }
 }

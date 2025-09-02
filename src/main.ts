@@ -9,11 +9,14 @@ import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import { join } from 'path';
+import qs from 'qs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      querystringParser: (str) => qs.parse(str),
+    }),
   );
   app.register(fastifyCookie, {
     secret: app.get(ConfigService).getOrThrow<string>('COOKIE_SECRET'),
