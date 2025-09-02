@@ -14,21 +14,21 @@ export class ProductsService {
   async findAllPaginated({
     pagination,
     sort,
-    query,
+    searchQuery,
     args,
   }: {
     pagination: Pagination;
     sort: Sorting;
-    query?: string;
+    searchQuery?: string;
     args: Omit<Prisma.ProductFindManyArgs, 'orderBy' | 'skip' | 'take'>;
   }): Promise<PaginatedResponse<Partial<Product>>> {
     const { offset, limit } = pagination;
     const where: Prisma.ProductWhereInput = { ...args.where };
     const orderBy: Prisma.ProductOrderByWithRelationInput = {};
 
-    if (query) {
+    if (searchQuery) {
       where.name = {
-        contains: query,
+        contains: searchQuery,
         mode: 'insensitive',
       };
     }

@@ -97,12 +97,12 @@ export class AdminProductsService {
   async findAll({
     pagination,
     sort,
-    query,
+    searchQuery,
     categoryId,
   }: {
     pagination: Pagination;
     sort: Sorting;
-    query?: string;
+    searchQuery?: string;
     categoryId?: number;
   }) {
     const where: Prisma.ProductWhereInput = {};
@@ -125,7 +125,7 @@ export class AdminProductsService {
     return this.productsService.findAllPaginated({
       pagination,
       sort,
-      query,
+      searchQuery,
       args: {
         where,
       },

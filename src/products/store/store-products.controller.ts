@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import {
   Pagination,
   PaginationParams,
@@ -12,6 +12,7 @@ import {
 } from 'src/common/decorators/sorting-params.decorator';
 import { Product } from 'generated/prisma';
 import { ProductCategoryParam } from 'src/common/decorators/product-category-param.decorator';
+import { ProductsFiltersDto } from './dtos/products-filters.dto';
 
 @Controller('store/products')
 export class StoreProductsController {
@@ -21,13 +22,15 @@ export class StoreProductsController {
   getProducts(
     @PaginationParams() pagination: Pagination,
     @SortingParams(['price', 'stock'] as Array<keyof Product>) sort: Sorting,
+    @Query() queryParams: ProductsFiltersDto,
     @ProductCategoryParam() categorySlug?: string,
-    @SearchParam() query?: string,
+    @SearchParam() searchQuery?: string,
   ) {
     return this.storeProductsService.findAll({
       pagination,
       sort,
-      query,
+      queryParams,
+      searchQuery,
       categorySlug,
     });
   }

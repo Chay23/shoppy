@@ -12,6 +12,7 @@ import { Prisma } from 'generated/prisma';
 import { CategoriesRepository } from 'src/categories/categories.repository';
 import { categoriesMessages } from 'src/categories/messages/messages';
 import { ProductsService } from '../products.service';
+import { ProductsFiltersDto } from './dtos/products-filters.dto';
 
 @Injectable()
 export class StoreProductsService {
@@ -24,12 +25,14 @@ export class StoreProductsService {
   async findAll({
     pagination,
     sort,
-    query,
+    queryParams,
+    searchQuery,
     categorySlug,
   }: {
     pagination: Pagination;
     sort: Sorting;
-    query?: string;
+    queryParams: ProductsFiltersDto;
+    searchQuery?: string;
     categorySlug?: string;
   }) {
     const where: Prisma.ProductWhereInput = {};
@@ -49,10 +52,14 @@ export class StoreProductsService {
       where.categoryId = category.id;
     }
 
+    if (queryParams.price) {
+      where.price = queryParams.price;
+    }
+
     return this.productsService.findAllPaginated({
       pagination,
       sort,
-      query,
+      searchQuery,
       args: {
         where,
       },

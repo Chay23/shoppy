@@ -57,13 +57,13 @@ export class AdminProductsController {
     ] as Array<keyof Product>)
     sort: Sorting,
     @ProductCategoryParam(ParseIntPipe) categoryId?: number,
-    @SearchParam() query?: string,
+    @SearchParam() searchQuery?: string,
   ) {
     return this.adminProductService.findAll({
       pagination,
       sort,
       categoryId,
-      query,
+      searchQuery,
     });
   }
 
